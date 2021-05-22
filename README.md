@@ -24,9 +24,9 @@ npm run help
 
 ### Folder structure
 
-First, create a folder to contain all experiments, in this case we will use folder `results` at the root of this repository. Then, create an empty subfolder for each experiment named `[mn]-verif3`, where `mn` is the name of a module net. So for example in order to translate module net `./examples/module-nets/researchnetv1`, we need to have following folder structure:
+First, create a folder to contain all experiments, in this case we will use folder `migra/experiments` in this repository. Then, create an empty subfolder for each experiment named `[mn]-verif3`, where `mn` is the name of a module net. So for example in order to translate module net `migra/examples/module-nets/researchnetv1`, we need to have following folder structure:
 ```
-analysis/                      this folder must be empty, verification results will be saved here
+results/                       this folder must be empty, verification results will be saved here
 examples/                      this is where we save inputs to our verification process
 ..module-nets/                 each subfolder of this is a module net
 ....researchnetv1/
@@ -36,7 +36,7 @@ examples/                      this is where we save inputs to our verification 
 ....verif3/
 ......configuration.json       instructions on how to translate and verify
 ......translation-grammar.ggx  translation grammar that translates module net to verification grammar
-results/                       each subfolder is a verified module net
+experiments/                   each subfolder is a verified module net
 ..researchnetv1-verif3/        instructs migra to verify module net researchnetv1 with verif3 procedure
 ```
 
@@ -46,20 +46,20 @@ results/                       each subfolder is a verified module net
 
 To translate module nets to verification grammars using AGG, run following command:
 ```
-npm run translate $(pwd)/examples/verifier $(pwd)/results $(pwd)/examples/module-nets
+npm run translate $(pwd)/examples/verifier $(pwd)/experiments $(pwd)/examples/module-nets
 ```
 
 #### Step 2. Critical pairs
 
 To compute critical pairs using Verigraph, run following command:
 ```
-npm run critical-pairs /tmp $(pwd)/examples/verifier $(pwd)/results
+npm run critical-pairs /tmp $(pwd)/examples/verifier $(pwd)/experiments
 ```
 
 #### Step 3. Verification
 
 To verify, run following command:
 ```
-npm run verify $(pwd)/examples/verifier $(pwd)/examples/module-nets $(pwd)/results $(pwd)/analysis
+npm run verify $(pwd)/examples/verifier $(pwd)/examples/module-nets $(pwd)/experiments $(pwd)/results
 ```
 
