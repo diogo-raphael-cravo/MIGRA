@@ -1,0 +1,178 @@
+{
+    "name": "verif3",
+    "resourceEdgeName": "resource-of",
+    "attributeEdgeName": "attribute-of",
+    "valueNodeName": "V",
+    "modulesToIgnore": ["V"],
+    "criticalPairInterpretations": [
+        {
+            "criticalPairType": "DELETE_USE_CONFLICT",
+            "fromRulePattern": "DEL",
+            "toRulePattern": "GET",
+            "interpretation": "dangling-resource",
+            "name": "DEL-GET-dangling-resource"
+        }, {
+            "criticalPairType": "DELETE_USE_CONFLICT",
+            "fromRulePattern": "DEL",
+            "toRulePattern": "NEW",
+            "interpretation": "dangling-resource",
+            "name": "DEL-NEW-dangling-resource"
+        }, {
+            "criticalPairType": "DELETE_USE_CONFLICT",
+            "fromRulePattern": "DEL",
+            "toRulePattern": "UPD",
+            "interpretation": "dangling-resource",
+            "name": "DEL-UPD-dangling-resource"
+        }, {
+            "criticalPairType": "PRODUCE_USE_DEPENDENCY",
+            "fromRulePattern": "UPD",
+            "toRulePattern": "GET",
+            "interpretation": "outdated-attribute",
+            "name": "UPD-GET-outdated-attribute"
+        }, {
+            "criticalPairType": "PRODUCE_USE_DEPENDENCY",
+            "fromRulePattern": "generate-attribute",
+            "toRulePattern": "GET",
+            "interpretation": "outdated-attribute",
+            "name": "generate-attribute-GET-outdated-attribute"
+        }
+    ],
+    "rulePatterns": [
+        {
+            "name": "generate-resource",
+            "regex": "generate-[\\w/_]+\\.[\\w/_]+",
+            "decorateProperties": {
+                "reachableByConstruction": true,
+                "mock": false,
+                "mapsToOperation": false,
+                "requiredByDefault": false
+            }
+        }, {
+            "name": "generate-attribute",
+            "regex": "generate-[\\w/_]+\\.[\\w/_]+\\.[\\w/_]+",
+            "decorateProperties": {
+                "reachableByConstruction": false,
+                "mock": false,
+                "mapsToOperation": false,
+                "requiredByDefault": false
+            }
+        }, {
+            "name": "mockgenerate-resource",
+            "regex": "mockgenerate-[\\w/_]+\\.[\\w/_]+",
+            "decorateProperties": {
+                "reachableByConstruction": true,
+                "mock": true,
+                "mapsToOperation": false,
+                "requiredByDefault": false
+            }
+        }, {
+            "name": "mockgenerate-attribute",
+            "regex": "mockgenerate-[\\w/_]+\\.[\\w/_]+\\.[\\w/_]+",
+            "decorateProperties": {
+                "reachableByConstruction": false,
+                "mock": true,
+                "mapsToOperation": false,
+                "requiredByDefault": false
+            }
+        }, {
+            "name": "require",
+            "regex": "require.*",
+            "decorateProperties": {
+                "reachableByConstruction": false,
+                "mock": false,
+                "mapsToOperation": false,
+                "requiredByDefault": true
+            }
+        }, {
+            "name": "GET",
+            "regex": ".*GET.*",
+            "decorateProperties": {
+                "reachableByConstruction": false,
+                "mock": false,
+                "mapsToOperation": true,
+                "requiredByDefault": false
+            }
+        }, {
+            "name": "UPD",
+            "regex": ".*UPD.*",
+            "decorateProperties": {
+                "reachableByConstruction": false,
+                "mock": false,
+                "mapsToOperation": true,
+                "requiredByDefault": false
+            }
+        }, {
+            "name": "NEW",
+            "regex": ".*NEW.*",
+            "decorateProperties": {
+                "reachableByConstruction": false,
+                "mock": false,
+                "mapsToOperation": true,
+                "requiredByDefault": false
+            }
+        }, {
+            "name": "DEL",
+            "regex": ".*DEL.*",
+            "decorateProperties": {
+                "reachableByConstruction": false,
+                "mock": false,
+                "mapsToOperation": true,
+                "requiredByDefault": false
+            }
+        }
+    ],
+    "translation": {
+        "moduleNet": {
+            "attributes": {
+                "moduleName": "name",
+                "resourceName": "name",
+                "resourceRequired": "required",
+                "resourceGenerated": "generated",
+                "attributeName": "name",
+                "attributeRequired": "required",
+                "attributeGenerated": "generated",
+                "operationName": "name"
+            },
+            "nodes": {
+                "module": "MN_Module",
+                "resource": "MN_Resource",
+                "attribute": "MN_Attribute",
+                "operation": "MN_Operation",
+                "resourceEdge": "MN_ResourceEdge",
+                "attributeEdge": "MN_AttributeEdge"
+            },
+            "edges": {
+                "edge": "MN_edge",
+                "source": "MN_source",
+                "target": "MN_target",
+                "resourceOf": "MN_resourceof",
+                "attributeOf": "MN_attributeof"
+            }
+        },
+        "gragra": {
+            "attributes": {
+                "edgeName": "type",
+                "nodeName": "type",
+                "ruleName": "name",
+                "id": "id"
+            },
+            "nodes": {
+                "node": "GRAGRA_Node",
+                "edge": "GRAGRA_Edge",
+                "graph": "GRAGRA_Graph",
+                "rule": "GRAGRA_Rule",
+                "graphTransformationSystem": "GRAGRA_GraphTransformationSystem"
+            },
+            "edges": {
+                "in": "GRAGRA_in",
+                "lhs": "GRAGRA_lhs",
+                "nac": "GRAGRA_nac",
+                "rhs": "GRAGRA_rhs",
+                "rule": "GRAGRA_rule",
+                "source": "GRAGRA_source",
+                "target": "GRAGRA_target",
+                "typegraph": "GRAGRA_typegraph"
+            }
+        }
+    }
+}
