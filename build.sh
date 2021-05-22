@@ -11,6 +11,7 @@ cd ../
 echo "Building MIGRA"
 cd migra
 npm install
+npm run build
 cd ../
 
 echo "Done!"

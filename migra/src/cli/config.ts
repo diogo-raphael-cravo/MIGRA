@@ -1,0 +1,10 @@
+import * as Path from 'path';
+export const BASE_DIR = Path.join(__dirname, '..', '..', '..');
+export const EXPERIMENTS_DIR = Path.join(BASE_DIR, 'experiments');
+export const MODULE_NETS_DIR = Path.join(BASE_DIR, 'module-net');
+export const VERIFIERS_DIR = Path.join(BASE_DIR, 'verifier');
+export const SOURCES_DIR = Path.join(BASE_DIR, 'sources');
+export const RESULTS_DIR = Path.join(BASE_DIR, 'scripts', 'results');
+export const VIEW_TEMPLATE_FILE = Path.join(BASE_DIR, 'scripts', 'src', 'cli', 'commands', 'template.html');
+export const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+export const TMP_DIR = '/tmp';

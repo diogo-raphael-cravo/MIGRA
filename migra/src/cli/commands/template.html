@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><!-- insert name here --></title>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+    ></script> 
+    <style type="text/css">
+        body {
+            /* background-color: dimgray; */
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+        .network {
+            height: 400px;
+            /* background-color: white; */
+        }
+        .border {
+            border: 1px solid lightgray;
+        }
+        .row {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+        }
+        .column {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+        }
+        #container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        #modules-container {
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+        #resources-container {
+            flex-grow: 5;
+        }
+        #operations-container {
+            flex: 1;
+        }
+        .operations {
+            margin-bottom: 5px;
+        }
+        .operation-name {
+            flex-grow: 1;
+            align-self: center;
+            margin-right: 10px;
+        }
+        .operation-graph {
+            flex-grow: 5;
+            margin: 5px;
+            height: 100%;
+        }
+        .operation-edges {
+            flex-grow: 5;
+            flex-basis: 50%;
+        }
+        .operation-graph-edge-name {
+            flex-grow: 1;
+            align-self: center;
+        }
+        .operation-attribute-graph {
+            flex-grow: 5;
+            margin: 5px;
+        }
+        h1, h2, h3, h4, h5 {
+            margin: 0;
+        }
+    </style> 
+  </head>
+  <body>
+    <div id="container">
+        <div class="column">
+            <div class="row">
+                <div id="modules-container">
+                    <h2>Modules and Operations Graph</h2>
+                    <div class="border network" id="modules"></div>
+                </div>
+                <div id="resources-container">
+                    <h2>Modules, Resources and Attributes Graph</h2>
+                    <div class="border network" id="resources"></div>
+                </div>
+            </div>
+            <div id="operations-container">
+                <h2>Operations</h2>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const BLACK = '#000000';
+        const GREY = '#aaaaaa';
+        const WHITE = '#ffffff';
+        function styleNode(node) {
+            if (!node.id || !node.label) {
+
+            }
+            let shape;
+            let background;
+            switch (node.type) {
+                case 'module':
+                    shape = 'box';
+                    background = GREY;
+                    break;
+                case 'resource':
+                    shape = 'box';
+                    background = WHITE;
+                    break;
+                case 'attribute':
+                    shape = 'ellipse';
+                    background = WHITE;
+                    break;
+                default:
+                    throw new Error(`unknown type '${node.type}'`);
+            }
+            let label = node.label;
+            if (undefined !== node.generate) {
+                label = label.concat(`\ngenerate:${node.generate}`);
+            }
+            if (undefined !== node.require) {
+                label = label.concat(`\nrequire:${node.require}`);
+            }
+            return {
+                id: node.id,
+                level: node.level,
+                label,
+                shape,
+                color: {
+                    background,
+                    border: BLACK,
+                },
+            };
+        }
+        function styleEdge(edge) {
+            return {
+                ...edge,
+                arrows: {
+                    to: {
+                        enabled: true,
+                    },
+                },
+                color: {
+                    color: BLACK,
+                },
+                font: {
+                    background: WHITE,
+                }
+            };
+        }
+        function makeNetwork(elementId, nodes, edges, options = {}) {
+            const visNodes = new vis.DataSet(nodes.map(node => styleNode(node)));
+            const visEdges = new vis.DataSet(edges.map(edge => styleEdge(edge)));
+            // create a network
+            const container = document.getElementById(elementId);
+            const data = {
+                nodes: visNodes,
+                edges: visEdges,
+            };
+            const network = new vis.Network(container, data, options);
+        }
+
+        // insert here
+        // const moduleNetwork = {
+        //     nodes: [
+        //         { id: 'A', label: 'A', type: 'module' },
+        //         { id: 'B', label: 'B', type: 'module' },
+        //         { id: 'C', label: 'C', type: 'module' },
+        //     ],
+        //     edges: [
+        //         { from: 'A', to: 'B', label: "E1(A,B)" },
+        //         { from: 'B', to: 'C', label: "E1(B,C)" },
+        //     ],
+        // };
+        // const resourceNetwork = {
+        //     nodes: [
+        //         { id: 'A', label: 'A', type: 'module' },
+        //         { id: 'B', label: 'B', type: 'module' },
+        //         { id: 'C', label: 'C', type: 'module' },
+        //         { id: 'A.R1', label: 'A.R1', type: 'resource', generate: true, require: false },
+        //         { id: 'B.R1', label: 'B.R1', type: 'resource', generate: true, require: false },
+        //         { id: 'C.R1', label: 'C.R1', type: 'resource', generate: true, require: false },
+        //         { id: 'A.R1.a1', label: 'A.R1.a1', type: 'attribute', generate: false, require: true },
+        //         { id: 'A.R1.a2', label: 'A.R1.a2', type: 'attribute', generate: false, require: true },
+        //         { id: 'A.R1.a3', label: 'A.R1.a3', type: 'attribute', generate: false, require: true },
+        //         { id: 'A.R1.a4', label: 'A.R1.a4', type: 'attribute', generate: false, require: true },
+        //         { id: 'B.R1.b1', label: 'B.R1.b1', type: 'attribute', generate: false, require: true },
+        //         { id: 'B.R1.b2', label: 'B.R1.b2', type: 'attribute', generate: false, require: true },
+        //         { id: 'B.R1.b3', label: 'B.R1.b3', type: 'attribute', generate: false, require: true },
+        //         { id: 'C.R1.c1', label: 'C.R1.c1', type: 'attribute', generate: false, require: true },
+        //     ],
+        //     edges: [
+        //         { from: 'A', to: 'A.R1' },
+        //         { from: 'B', to: 'B.R1' },
+        //         { from: 'C', to: 'C.R1' },
+        //         { from: 'A.R1', to: 'A.R1.a1' },
+        //         { from: 'A.R1', to: 'A.R1.a2' },
+        //         { from: 'A.R1', to: 'A.R1.a3' },
+        //         { from: 'A.R1', to: 'A.R1.a4' },
+        //         { from: 'B.R1', to: 'B.R1.b1' },
+        //         { from: 'B.R1', to: 'B.R1.b2' },
+        //         { from: 'B.R1', to: 'B.R1.b3' },
+        //         { from: 'C.R1', to: 'C.R1.c1' },
+        //     ],
+        // };
+
+        // const operationNetworks = [{
+        //     name: 'E1(A,B)',
+        //     operationGraph: {
+        //         nodes: [
+        //             { id: 'A.R1', label: 'A.R1', type: 'resource', level: 0 },
+        //             { id: 'B.R1', label: 'B.R1', type: 'resource', level: 1 },
+        //         ],
+        //         edges: [
+        //             { from: 'A.R1', to: 'B.R1', label: 'I', smooth: { enabled: true, type: 'curvedCW', roundness: 0.2 } },
+        //             { from: 'B.R1', to: 'A.R1', label: 'O', smooth: { enabled: true, type: 'curvedCW', roundness: 0.2 } },
+        //         ],
+        //     },
+        //     attributeGraphs: [{
+        //         name: 'input',
+        //         graph: {
+        //             nodes: [
+        //                 { id: 'A.R1.a1', label: 'A.R1.a1', type: 'attribute', level: 0 },
+        //                 { id: 'A.R1.a2', label: 'A.R1.a2', type: 'attribute', level: 0 },
+        //                 { id: 'B.R1.b1', label: 'B.R1.b1', type: 'attribute', level: 1 },
+        //                 { id: 'B.R1.b2', label: 'B.R1.b2', type: 'attribute', level: 1 },
+        //             ],
+        //             edges: [
+        //                 { from: 'A.R1.a1', to: 'B.R1.b1' },
+        //                 { from: 'A.R1.a2', to: 'B.R1.b2' },
+        //             ],
+        //         }
+        //     }, {
+        //         name: 'Output',
+        //         graph: {
+        //             nodes: [],
+        //             edges: [],
+        //         }
+        //     }],
+        // }, {
+        //     name: 'E1(B,C)',
+        //     operationGraph: {
+        //         nodes: [
+        //             { id: 'B.R1', label: 'B.R1', type: 'resource', level: 0 },
+        //             { id: 'C.R1', label: 'C.R1', type: 'resource', level: 1 },
+        //         ],
+        //         edges: [
+        //             { from: 'B.R1', to: 'C.R1', label: 'I', smooth: { enabled: true, type: 'curvedCW', roundness: 0.2 } },
+        //             { from: 'C.R1', to: 'B.R1', label: 'O', smooth: { enabled: true, type: 'curvedCW', roundness: 0.2 } },
+        //         ],
+        //     },
+        //     attributeGraphs: [{
+        //         name: 'I',
+        //         graph: {
+        //             nodes: [],
+        //             edges: [],
+        //         }
+        //     }, {
+        //         name: 'O',
+        //         graph: {
+        //             nodes: [],
+        //             edges: [],
+        //         }
+        //     }],
+        // }];
+        makeNetwork('modules', moduleNetwork.nodes, moduleNetwork.edges);
+        const UDHierarchicalLayout = { layout: { hierarchical: { direction: 'UD' } } };
+        makeNetwork('resources', resourceNetwork.nodes, resourceNetwork.edges, UDHierarchicalLayout);
+        const LRHierarchicalLayout = { layout: { hierarchical: { direction: 'LR' } } };
+        operationNetworks.forEach((operation, index) => {
+            const id = `operation-${index}`;
+            const containerTag = document.getElementById('operations-container');
+
+            const operationsTag = document.createElement('div');
+            operationsTag.id = id;
+            operationsTag.classList = 'border column operations';
+            operationsTag.style = 'display: flex';
+            containerTag.appendChild(operationsTag);
+
+            const firstRow = document.createElement('div');
+            firstRow.className = 'row';
+            operationsTag.appendChild(firstRow);
+
+            const secondRow = document.createElement('div');
+            secondRow.className = 'row';
+            operationsTag.appendChild(secondRow);
+
+            const thirdRow = document.createElement('div');
+            thirdRow.className = 'row';
+            operationsTag.appendChild(thirdRow);
+
+            const fourthRow = document.createElement('div');
+            fourthRow.className = 'row';
+            operationsTag.appendChild(fourthRow);
+
+            const fifthRow = document.createElement('div');
+            fifthRow.className = 'row';
+            operationsTag.appendChild(fifthRow);
+
+            // name
+            const operationName = document.createElement('h3');
+            operationName.innerHTML = `Operation name: ${operation.name}`;
+            operationName.className = 'operation-name';
+            firstRow.appendChild(operationName);
+
+            // operation graph
+            const operationGraph = document.createElement('h3');
+            operationGraph.innerHTML = 'Operation graph:';
+            operationGraph.className = 'operation-name';
+            secondRow.appendChild(operationGraph);
+            const operationsGraphTag = document.createElement('div');
+            operationsGraphTag.id = `${id}-graph`;
+            operationsGraphTag.classList = 'operation-graph border';
+            thirdRow.appendChild(operationsGraphTag);
+            makeNetwork(operationsGraphTag.id, operation.operationGraph.nodes, operation.operationGraph.edges, LRHierarchicalLayout);
+
+            // edges
+            const operationEdgesLabel = document.createElement('h3');
+            operationEdgesLabel.innerHTML = 'Operation graph edges:';
+            operationEdgesLabel.className = 'operation-name';
+            fourthRow.appendChild(operationEdgesLabel);
+            const operationEdges = document.createElement('div');
+            operationEdges.classList = 'operation-edges row';
+            fifthRow.appendChild(operationEdges);
+            operation.attributeGraphs.forEach((attributeGraph, index) => {
+                const columnTag = document.createElement('div');
+                columnTag.className = 'column';
+                operationEdges.appendChild(columnTag);
+
+                // edge name
+                const edgeName = document.createElement('h4');
+                edgeName.innerHTML = attributeGraph.name;
+                edgeName.className = 'operation-graph-edge-name';
+                columnTag.appendChild(edgeName);
+
+                // attribute graph
+                const justDivTag = document.createElement('div');
+                justDivTag.className = 'operation-attribute-graph';
+                columnTag.appendChild(justDivTag);
+                
+                const attributeGraphTag = document.createElement('div');
+                attributeGraphTag.id = `${id}-graph-attribute-${index}`;
+                attributeGraphTag.className = 'border network';
+                justDivTag.appendChild(attributeGraphTag);
+                makeNetwork(attributeGraphTag.id, attributeGraph.graph.nodes, attributeGraph.graph.edges, LRHierarchicalLayout);
+            });
+        });
+    </script>
+  </body>
+</html>

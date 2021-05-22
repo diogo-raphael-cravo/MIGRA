@@ -1,5 +1,6 @@
 # MIGRA
-Module Integration using Graph Grammars (MIGRA)
+
+Module Integration using Graph Grammars (MIGRA) is a research project to help developers migrate software modules.
 
 ## Requirements
 

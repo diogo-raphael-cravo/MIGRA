@@ -1,0 +1,76 @@
+{
+    "name": "researchnetv3",
+    "nodes": [{
+        "id": "Website",
+        "resources": [{
+            "id": "Website.Search",
+            "attributes": ["Website.Search.DOI", "Website.Search.Title", "Website.Search.Region"]
+        }],
+        "required": [],
+        "generated": ["Website.Search", "Website.Search.DOI", "Website.Search.Region"]
+    }, {
+        "id": "ResearchNet",
+        "resources": [{
+            "id": "ResearchNet.Article",
+            "attributes": ["ResearchNet.Article.ID", "ResearchNet.Article.History"]
+        }],
+        "required": [],
+        "generated": ["ResearchNet.Article"]
+    }, {
+        "id": "InventoryService",
+        "resources": [{
+            "id": "InventoryService.Document",
+            "attributes": ["InventoryService.Document.Location"]
+        }],
+        "required": ["InventoryService.Document.Location"],
+        "generated": ["InventoryService.Document"]
+    }],
+    "edges": [{
+        "id": "FindArticle",
+        "fromId": "Website",
+        "toId": "ResearchNet",
+        "type": "GET",
+        "graph": {
+            "edges": [{
+                "id": "E_call",
+                "fromId": "Website.Search",
+                "toId": "ResearchNet.Article",
+                "type": "EDGE_INPUT",
+                "attributeMapping": [{
+                    "fromId": "Website.Search.DOI",
+                    "toId": "ResearchNet.Article.ID"
+                }, {
+                    "fromId": "Website.Search.Region",
+                    "toId": "ResearchNet.Article.History"
+                }]
+            }],
+            "nodes": [{
+                "id": "Website.Search"
+            }, {
+                "id": "ResearchNet.Article"
+            }]
+        }
+    }, {
+        "id": "FindDocument",
+        "fromId": "ResearchNet",
+        "toId": "InventoryService",
+        "type": "GET",
+        "graph": {
+            "edges": [{
+                "id": "E_call",
+                "fromId": "ResearchNet.Article",
+                "toId": "InventoryService.Document",
+                "type": "EDGE_INPUT",
+                "attributeMapping": [{
+                    "fromId": "ResearchNet.Article.ID",
+                    "toId": "InventoryService.Document.Location"
+                }]
+            }],
+            "nodes": [{
+                "id": "InventoryService.Document"
+            }, {
+                "id": "ResearchNet.Article"
+            }]
+        }
+    }]
+}
