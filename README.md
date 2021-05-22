@@ -22,21 +22,44 @@ cd migra
 npm run help
 ```
 
+### Folder structure
+
 First, create a folder to contain all experiments, in this case we will use folder `results` at the root of this repository. Then, create an empty subfolder for each experiment named `[mn]-verif3`, where `mn` is the name of a module net. So for example in order to translate module net `./examples/module-nets/researchnetv1`, we need to have following folder structure:
 ```
-examples/
-..module-nets/
+analysis/                      this folder must be empty, verification results will be saved here
+examples/                      this is where we save inputs to our verification process
+..module-nets/                 each subfolder of this is a module net
 ....researchnetv1/
-......module-net.json
-......requirements.json
-..verifier/
+......module-net.json          actual module net
+......requirements.json        auxiliary file used to compute statistics
+..verifier/                    each subfolder is a verification and translation procedure
 ....verif3/
-......configuration.json
-......translation-grammar.ggx
-results/
-..researchnetv1-verif3/
+......configuration.json       instructions on how to translate and verify
+......translation-grammar.ggx  translation grammar that translates module net to verification grammar
+results/                       each subfolder is a verified module net
+..researchnetv1-verif3/        instructs migra to verify module net researchnetv1 with verif3 procedure
 ```
-and then run following command:
+
+### Running step-by-step
+
+#### Step 1. Translation
+
+To translate module nets to verification grammars using AGG, run following command:
 ```
-npm run translate examples/verifier results examples/module-nets
+npm run translate $(pwd)/examples/verifier $(pwd)/results $(pwd)/examples/module-nets
 ```
+
+#### Step 2. Critical pairs
+
+To compute critical pairs using Verigraph, run following command:
+```
+npm run critical-pairs /tmp $(pwd)/examples/verifier $(pwd)/results
+```
+
+#### Step 3. Verification
+
+To verify, run following command:
+```
+npm run verify $(pwd)/examples/verifier $(pwd)/examples/module-nets $(pwd)/results $(pwd)/analysis
+```
+
