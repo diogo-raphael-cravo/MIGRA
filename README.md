@@ -18,13 +18,13 @@ sh build.sh
 
 For help, run:
 ```
-cd migra
+cd migrate
 npm run help
 ```
 
 ### Folder structure
 
-First, create a folder to contain all experiments, in this case we will use folder `migra/experiments` in this repository. Then, create an empty subfolder for each experiment named `[mn]-verif3`, where `mn` is the name of a module net. So for example in order to translate module net `migra/examples/module-nets/researchnetv1`, we need to have following folder structure:
+First, create a folder to contain all experiments, in this case we will use folder `migrate/experiments` in this repository. Then, create an empty subfolder for each experiment named `[mn]-verif3`, where `mn` is the name of a module net. So for example in order to translate module net `migrate/examples/module-nets/researchnetv1`, we need to have following folder structure:
 ```
 results/                       this folder must be empty, verification results will be saved here
 examples/                      this is where we save inputs to our verification process
@@ -37,7 +37,7 @@ examples/                      this is where we save inputs to our verification 
 ......configuration.json       instructions on how to translate and verify
 ......translation-grammar.ggx  translation grammar that translates module net to verification grammar
 experiments/                   each subfolder is a verified module net
-..researchnetv1-verif3/        instructs migra to verify module net researchnetv1 with verif3 procedure
+..researchnetv1-verif3/        instructs migrate to verify module net researchnetv1 with verif3 procedure
 ```
 
 ### Running step-by-step

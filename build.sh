@@ -8,8 +8,8 @@ cd verigraph
 docker build -t verigraph:754ec08 -f ./Dockerfile .
 cd ../
 
-echo "Building MIGRA"
-cd migra
+echo "Building MIGRATE"
+cd migrate
 npm install
 npm run build
 cd ../
